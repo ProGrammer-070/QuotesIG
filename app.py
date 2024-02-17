@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # Instagram credentials
-INSTAGRAM_USERNAME = ''
+INSTAGRAM_USERNAME = 'abc@gmail.com'
 INSTAGRAM_PASSWORD = 'xyz'
 
 def upload_to_instagram(image_path, caption):
@@ -20,7 +20,7 @@ def index():
     if request.method == 'POST':
         if 'generate' in request.form:
             # Generate the quote image
-            save_nature_image_with_quote("static/output_image.png")
+            save_nature_image_with_quote()
             flash('Nature image with quote generated successfully!', 'success')
         elif 'upload' in request.form:
             # Upload the image to Instagram
