@@ -5,7 +5,7 @@ import requests
 from PIL import Image, ImageDraw, ImageFont
 
 
-def fetch_random_nature_image(width=1080, height=1920):
+def fetch_random_nature_image(width=1080, height=1080):
     """
     Fetches a random nature image from Unsplash.
 
@@ -17,7 +17,7 @@ def fetch_random_nature_image(width=1080, height=1920):
         PIL.Image.Image: The fetched image.
     """
     url = f"https://source.unsplash.com/featured/{width}x{height}/?nature"
-    response = requests.get(url, stream=True)
+    response = requests.get(url)
 
     if response.status_code == 200:
         img = Image.open(BytesIO(response.content))
@@ -57,7 +57,7 @@ def generate_random_quote():
         tuple: A tuple containing a random quote and its author.
     """
     try:
-        response = requests.get("http://api.quotable.io/random?minLength=150")
+        response = requests.get("http://api.quotable.io/random?maxLength=300")
         if response.status_code == 200:
             data = response.json()
             return (data["content"], data["author"])
@@ -176,7 +176,7 @@ def add_quote_and_author(
     return image
 
 
-def save_nature_image_with_quote(output_path="output_image.png"):
+def save_nature_image_with_quote(output_path="output_image.jpeg"):
     """
     Fetches a random nature image from Unsplash, generates a random quote and author,
     adds the quote and author to the image using the specified font, and saves the resulting image.
