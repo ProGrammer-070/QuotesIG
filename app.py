@@ -1,36 +1,28 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, flash, redirect, url_for
 from quote_maker import save_nature_image_with_quote
 from instabot import Bot
+import datetime
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = "TheSecretIsKnown"  # Change this to a secure key
 
-# Instagram credentials
-INSTAGRAM_USERNAME = 'abc@gmail.com'
-INSTAGRAM_PASSWORD = 'xyz'
-
-def upload_to_instagram(image_path, caption):
-    bot = Bot()
-    bot.login(username=INSTAGRAM_USERNAME, password=INSTAGRAM_PASSWORD)
-    bot.upload_photo(image_path, caption=caption)
-    bot.logout()
+# Initialize Instabot
+bot = Bot()
+bot.login(username="daily_dose_of_wise_words", password="root@insta#7")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        if 'generate' in request.form:
-            # Generate the quote image
-            save_nature_image_with_quote()
-            flash('Nature image with quote generated successfully!', 'success')
-        elif 'upload' in request.form:
+        if request.form['action'] == 'generate':
+            save_nature_image_with_quote("static/output_image.png")
+            return redirect(url_for('index'))
+        elif request.form['action'] == 'upload':
             # Upload the image to Instagram
             try:
-                upload_to_instagram('nature_quote.png', 'Your random caption here #tag1 #tag2')
-                flash('Image uploaded to Instagram successfully!', 'success')
+                bot.upload_photo("static/output_image.png", caption=f"Word Of Wisdom | {datetime.datetime.now().strftime('%b %d')}\n\n#motivation #inspiration #quote")
+                flash("Image uploaded to Instagram successfully!", "success")
             except Exception as e:
-                flash(f'Error uploading image: {str(e)}', 'error')
-        return redirect(url_for('index'))
-
+                flash(f"Error uploading image to Instagram: {str(e)}", "danger")
     return render_template('index.html')
 
 if __name__ == '__main__':
